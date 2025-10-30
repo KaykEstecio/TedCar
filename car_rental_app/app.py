@@ -1,8 +1,11 @@
-from flask import Flask, render_template
+
 from db import db
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, login_required, logout_user, UserMixin, current_user
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 
 
@@ -13,11 +16,22 @@ app.secret_key = 'chave_secreta_para_sessoes'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
+
 
 
 ''' Configurações do banco de dados'''
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+# Caminho absoluto para o banco de dados
+import os
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance', 'database.db')
+
+# Garante que a pasta instance existe
+os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance'), exist_ok=True)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 ''' Inicializa o SQLAlchemy com a app '''
 db.init_app(app)
@@ -36,26 +50,25 @@ with app.app_context():
     db.create_all()
 
 ''' sistema de registro de usuários '''
-from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+
 
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
 
-
+''' sistema de registro de usuários '''
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         nome = request.form['nome']
         email = request.form['email']
-        senha = generate_password_hash(request.form['senha'])
+        senha_hash = generate_password_hash(request.form['senha'])
 
         if User.query.filter_by(email=email).first():
             return "❌ E-mail já cadastrado."
 
-        novo_user = User(nome=nome, email=email, senha=senha)
+        novo_user = User(nome=nome, email=email, senha_hash=senha_hash)
         db.session.add(novo_user)
         db.session.commit()
         return redirect(url_for('login'))
@@ -68,17 +81,31 @@ def register():
 def login():
     if request.method == 'POST':
         email = request.form['email']
-        senha = request.form['senha']
+        senha_hash = request.form['senha']
+
+        # Busca o usuário no banco
         user = User.query.filter_by(email=email).first()
 
-        if user and check_password_hash(user.senha, senha):
+        # Verifica se encontrou e se a senha confere
+        if user and user.check_password(senha_hash):
+            # Loga o usuário usando Flask-Login e também guarda na sessão
             login_user(user)
-            return redirect(url_for('dashboard'))
+            session['user_id'] = user.id
+            flash('Login realizado com sucesso!', 'success')
+            return redirect(url_for('listar_carros'))
         else:
-            return "❌ Credenciais inválidas."
+            flash('Email ou senha inválidos.', 'error')
+            return redirect(url_for('login'))
+
     return render_template('login.html')
 
 
+
+
+# Usamos o decorator `login_required` do Flask-Login (importado acima)
+
+
+''' sistema de logout '''
 @app.route('/logout')
 @login_required
 def logout():
@@ -88,32 +115,46 @@ def logout():
 
 
 
-
+''' sistema de exibir carros '''
 @app.route('/cars')
-def mostrar_carros():
+def listar_carros():
     carros = Car.query.all()
     return render_template('cars.html', carros=carros)
 
-from flask import request, redirect, url_for
 
-''' sistema de adicionar carros '''
+
+''' sistema de adicionar carros (apenas para usuários logados) '''
 @app.route('/add_car', methods=['GET', 'POST'])
 @login_required
 def add_car():
     if request.method == 'POST':
         marca = request.form['marca']
         modelo = request.form['modelo']
-        preco_dia = float(request.form['preco_dia'])
+        preco_dia_raw = request.form['preco_dia']
+        # Validação básica: converter para float
+        try:
+            preco_dia = float(preco_dia_raw)
+        except ValueError:
+            flash('Preço inválido. Use um número, por exemplo: 120.00', 'error')
+            return render_template('add_car.html')
 
-        novo_carro = Car(marca=marca, modelo=modelo, preco_dia=preco_dia, user_id=current_user.id)
-        db.session.add(novo_carro)
-        db.session.commit()
-        return redirect(url_for('dashboard'))
+        novo_carro = Car(
+            marca=marca,
+            modelo=modelo,
+            preco_dia=preco_dia,
+            user_id=current_user.id
+        )
+
+    db.session.add(novo_carro)
+    db.session.commit()
+    flash('Carro adicionado com sucesso!', 'success')
+    return redirect(url_for('listar_carros'))
 
     return render_template('add_car.html')
 
 
 
+''' sistema de exibir carros '''
 @app.route('/cars')
 def cars():
     carros = Car.query.all()
@@ -127,6 +168,10 @@ def cars():
 def dashboard():
     carros = Car.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', carros=carros)
+
+
+
+
 
     
 

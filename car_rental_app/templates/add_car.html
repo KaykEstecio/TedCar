@@ -1,3 +1,47 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastrar Carro</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      form { max-width: 420px; }
+      label { display:block; margin-top:10px; }
+      input[type=text], input[type=number] { width:100%; padding:8px; box-sizing:border-box }
+      button { margin-top:12px; padding:8px 12px }
+      .flash { padding:8px; margin-bottom:10px; border-radius:4px }
+      .flash.error { background:#f8d7da; color:#842029 }
+      .flash.success { background:#d1e7dd; color:#0f5132 }
+    </style>
+  </head>
+  <body>
+    <h1>Cadastrar novo carro</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('add_car') }}">
+      <label for="marca">Marca</label>
+      <input id="marca" name="marca" type="text" required>
+
+      <label for="modelo">Modelo</label>
+      <input id="modelo" name="modelo" type="text" required>
+
+      <label for="preco_dia">Preço por dia (R$)</label>
+      <input id="preco_dia" name="preco_dia" type="text" required placeholder="Ex: 120.00">
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <p><a href="{{ url_for('listar_carros') }}">Voltar para lista</a></p>
+  </body>
+</html>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
