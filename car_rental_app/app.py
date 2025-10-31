@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 
 
@@ -20,24 +21,28 @@ login_manager.login_message_category = 'info'
 
 
 
-''' Configurações do banco de dados'''
-
-# Caminho absoluto para o banco de dados
 import os
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance', 'database.db')
 
-# Garante que a pasta instance existe
-os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance'), exist_ok=True)
+''' caminho base do projeto '''
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# Detecta se existe variável de ambiente (Railway/Postgres)
+database_url = os.getenv('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'instance', 'database.db'))
+
+# Ajuste necessário para o SQLAlchemy aceitar URLs do Postgres
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 
 ''' Inicializa o SQLAlchemy com a app '''
 db.init_app(app)
 
 ''' Importa os modelos depois de configurar o db (evita import circular) '''
-from modelos import Car, User
+from car_rental_app.modelos import Car, User
 
 
 @login_manager.user_loader
@@ -48,6 +53,11 @@ def load_user(user_id):
 ''' Cria as tabelas no banco'''
 with app.app_context():
     db.create_all()
+
+
+@app.context_processor
+def inject_now():
+    return {'current_year': datetime.now().year}
 
 ''' sistema de registro de usuários '''
 
@@ -102,9 +112,6 @@ def login():
 
 
 
-# Usamos o decorator `login_required` do Flask-Login (importado acima)
-
-
 ''' sistema de logout '''
 @app.route('/logout')
 @login_required
@@ -138,27 +145,26 @@ def add_car():
             flash('Preço inválido. Use um número, por exemplo: 120.00', 'error')
             return render_template('add_car.html')
 
+        # Verifica se já existe um carro com mesma marca/modelo para este usuário
+        existe = Car.query.filter_by(marca=marca, modelo=modelo, user_id=current_user.id).first()
+        if existe:
+            flash('Você já cadastrou esse carro anteriormente.', 'error')
+            return render_template('add_car.html')
+
         novo_carro = Car(
             marca=marca,
             modelo=modelo,
             preco_dia=preco_dia,
             user_id=current_user.id
         )
+        db.session.add(novo_carro)
+        db.session.commit()
+        flash('Carro adicionado com sucesso!', 'success')
+        return redirect(url_for('listar_carros'))
 
-    db.session.add(novo_carro)
-    db.session.commit()
-    flash('Carro adicionado com sucesso!', 'success')
-    return redirect(url_for('listar_carros'))
-
+    # Se não for POST, apenas renderiza o formulário
     return render_template('add_car.html')
 
-
-
-''' sistema de exibir carros '''
-@app.route('/cars')
-def cars():
-    carros = Car.query.all()
-    return render_template('cars.html', carros=carros)
 
 
 

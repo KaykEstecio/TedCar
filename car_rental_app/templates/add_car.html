@@ -1,22 +1,10 @@
-<!doctype html>
-<html lang="pt-br">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastrar Carro</title>
-    <style>
-      body { font-family: Arial, sans-serif; padding: 20px; }
-      form { max-width: 420px; }
-      label { display:block; margin-top:10px; }
-      input[type=text], input[type=number] { width:100%; padding:8px; box-sizing:border-box }
-      button { margin-top:12px; padding:8px 12px }
-      .flash { padding:8px; margin-bottom:10px; border-radius:4px }
-      .flash.error { background:#f8d7da; color:#842029 }
-      .flash.success { background:#d1e7dd; color:#0f5132 }
-    </style>
-  </head>
-  <body>
-    <h1>Cadastrar novo carro</h1>
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Carro — TedCar{% endblock %}
+
+{% block content %}
+  <div class="card" style="max-width:640px">
+    <h2>🚗 Cadastrar Novo Carro</h2>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -36,34 +24,11 @@
       <label for="preco_dia">Preço por dia (R$)</label>
       <input id="preco_dia" name="preco_dia" type="text" required placeholder="Ex: 120.00">
 
-      <button type="submit">Cadastrar</button>
+      <div style="margin-top:12px">
+        <button class="primary" type="submit">Cadastrar</button>
+        <a href="{{ url_for('listar_carros') }}" style="margin-left:8px"><button type="button" class="ghost">Voltar</button></a>
+      </div>
     </form>
+  </div>
+{% endblock %}
 
-    <p><a href="{{ url_for('listar_carros') }}">Voltar para lista</a></p>
-  </body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Cadastrar Carro</title>
-</head>
-<body>
-  <h2>🚗 Cadastrar Novo Carro</h2>
-  <form method="POST">
-    <label>Marca:</label><br>
-    <input type="text" name="marca" required><br><br>
-
-    <label>Modelo:</label><br>
-    <input type="text" name="modelo" required><br><br>
-
-    <label>Preço por dia:</label><br>
-    <input type="number" step="0.01" name="preco_dia" required><br><br>
-
-    <button type="submit">Cadastrar</button>
-  </form>
-
-  <br>
-  <a href="/cars">Ver todos os carros</a>
-</body>
-</html>

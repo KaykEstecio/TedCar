@@ -1,23 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Lista de Carros</title>
-</head>
-<body>
-  <h2>🚘 Carros Cadastrados</h2>
+{% extends 'base.html' %}
 
-  {% if carros %}
-    <ul>
-      {% for c in carros %}
-        <li>{{ c.marca }} {{ c.modelo }} — R${{ "%.2f"|format(c.preco_dia) }}/dia — {{ c.status }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Nenhum carro cadastrado.</p>
-  {% endif %}
+{% block title %}Carros — TedCar{% endblock %}
 
-  <br>
-  <a href="/add_car">Cadastrar novo carro</a>
-</body>
-</html>
+{% block content %}
+  <div class="card">
+    <h2>🚘 Carros Cadastrados</h2>
+    {% if carros %}
+      <div class="grid">
+        {% for c in carros %}
+          <div class="car-item">
+            <div class="car-meta">
+              <div class="car-title">{{ c.marca }} {{ c.modelo }}</div>
+              <div class="muted">Status: {{ c.status }}</div>
+            </div>
+            <div class="car-price">R${{ "%.2f"|format(c.preco_dia) }}/dia</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">Nenhum carro cadastrado.</p>
+    {% endif %}
+
+    <div style="margin-top:14px">
+      <a href="{{ url_for('add_car') }}"><button class="primary">Cadastrar novo carro</button></a>
+    </div>
+  </div>
+{% endblock %}
