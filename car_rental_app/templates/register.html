@@ -2,52 +2,63 @@
 
 {% block title %}Registrar — TedCar{% endblock %}
 
-{% block content %}
-  <div class="card" style="max-width:480px;margin:auto">
-    <h2>Registrar-se</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, msg in messages %}
-          <div class="flash {{ category }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form method="post" action="{{ url_for('register') }}">
-      <label for="nome">Nome</label>
-      <input id="nome" name="nome" type="text" required>
-
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" required>
-
-      <label for="senha">Senha</label>
-      <input id="senha" name="senha" type="password" required>
-
-      <div style="margin-top:12px">
-        <button class="primary" type="submit">Criar conta</button>
-        <a href="{{ url_for('login') }}" style="margin-left:8px"><button type="button" class="ghost">Entrar</button></a>
-      </div>
-    </form>
-  </div>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='register.css', v=2) }}">
 {% endblock %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Cadastro</title>
-</head>
-<body>
-  <h2>🧾 Cadastro</h2>
-  <form method="POST">
-    <label>Nome:</label><br>
-    <input type="text" name="nome" required><br><br>
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
-    <label>Senha:</label><br>
-    <input type="password" name="senha" required><br><br>
-    <button type="submit">Cadastrar</button>
-  </form>
-  <p>Já tem conta? <a href="/login">Fazer login</a></p>
-</body>
-</html>
+
+{% block navbar %}
+  <header class="navbar">
+    <div class="logo">TedCar</div>
+    <nav>
+      <a href="{{ url_for('listar_carros') }}">Carros</a>
+      <a href="{{ url_for('login') }}">Entrar</a>
+      <a href="{{ url_for('register') }}" class="active">Registrar</a>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block body_content %}
+  <div class="main-content">
+    <div class="card">
+      <h2>Criar Conta</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" action="{{ url_for('register') }}">
+        
+        <div class="input-group">
+          <label for="nome">Nome Completo</label>
+          <input id="nome" name="nome" type="text" required placeholder="Ex: Thiago Silva">
+        </div>
+
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required placeholder="seu@email.com">
+        </div>
+
+        <div class="input-group">
+          <label for="senha">Senha</label>
+          <input id="senha" name="senha" type="password" required placeholder="••••••••">
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Criar Conta</button>
+          <a href="{{ url_for('login') }}" class="btn ghost">Já tenho conta</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <footer class="neon-footer">
+    © 2025 TedCar
+  </footer>
+{% endblock %}

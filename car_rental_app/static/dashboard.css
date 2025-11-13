@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+  --bg: radial-gradient(circle at center, #020b16 0%, #01060f 100%);
+  --grid-line: rgba(0, 255, 255, 0.08);
+  --accent: #00eaff;
+  --text: #d9eaff;
+  --muted: #7f8fa8;
+  --btn-bg: rgba(0, 234, 255, 0.15);
+  --radius: 16px;
+  --shadow-glow: 0 0 25px rgba(0, 234, 255, 0.25);
+}
+
+/* Reset e Layout Vertical */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Importante para o rodapé ficar embaixo */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Fundo 3D */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(400px) rotateX(60deg);
+  top: 40%;
+  bottom: 0;
+  opacity: 0.4;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* --- NAVBAR (Igual ao Add Car) --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  width: 100%;
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--accent);
+  text-shadow: 0 0 15px var(--accent);
+}
+
+.navbar nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 30px;
+  font-size: 1rem;
+  transition: 0.3s;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.navbar nav a:hover, 
+.navbar nav a.active {
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent);
+}
+
+/* --- CONTEÚDO CENTRAL --- */
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Card Central */
+.card {
+  text-align: center;
+  background: rgba(2, 11, 22, 0.75);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-glow), inset 0 0 30px rgba(0, 234, 255, 0.05);
+  border-radius: var(--radius);
+  padding: 40px 60px;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.8s ease-in-out;
+  min-width: 500px;
+  max-width: 90%;
+}
+
+/* Título */
+h2 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--accent);
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px var(--accent);
+}
+
+/* Subtítulo */
+p {
+  color: var(--muted);
+  margin-bottom: 25px;
+}
+
+/* Lista de carros */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 25px;
+  text-align: left;
+  background: rgba(0, 255, 255, 0.02);
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  border-radius: var(--radius);
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+li:last-child {
+  border-bottom: none;  
+}
+
+/* Indicador de status (Ajustado conforme pedido anterior) */
+.status {
+  width: 12px;
+  height: 12px;
+  background: #00ff88;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff88;
+  margin-left: 20px;
+  flex-shrink: 0;    
+}   
+
+/* Botões */
+.actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: var(--radius);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: 0.3s ease;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: rgba(0, 234, 255, 0.1);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.1);
+}
+
+.btn.primary:hover {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 20px var(--accent);
+  transform: translateY(-2px);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid #334155; /* Cor mais discreta para o botão Sair */
+  color: var(--muted);
+}
+
+.btn.ghost:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* Rodapé */
+.neon-footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,14 +1,9 @@
-
-from db import db
+from car_rental_app.db import db
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-
-
-
-
+import os
 
 ''' Inicializa o app Flask '''
 app = Flask(__name__)
@@ -19,11 +14,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
-
-
-import os
-
-''' caminho base do projeto '''
+''' Caminho base do projeto '''
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Detecta se existe variável de ambiente (Railway/Postgres)
@@ -36,38 +27,35 @@ if database_url.startswith("postgres://"):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
-
 ''' Inicializa o SQLAlchemy com a app '''
 db.init_app(app)
 
 ''' Importa os modelos depois de configurar o db (evita import circular) '''
 from car_rental_app.modelos import Car, User
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-''' Cria as tabelas no banco'''
+''' Cria as tabelas no banco '''
 with app.app_context():
     db.create_all()
-
 
 @app.context_processor
 def inject_now():
     return {'current_year': datetime.now().year}
 
-''' sistema de registro de usuários '''
 
+# ============================
+# Rotas do Sistema
+# ============================
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
-''' sistema de registro de usuários '''
+''' Sistema de registro de usuários '''
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -85,8 +73,7 @@ def register():
     return render_template('register.html')
 
 
-
-''' sistema de login/logout '''
+''' Sistema de login/logout '''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -98,7 +85,6 @@ def login():
 
         # Verifica se encontrou e se a senha confere
         if user and user.check_password(senha_hash):
-            # Loga o usuário usando Flask-Login e também guarda na sessão
             login_user(user)
             session['user_id'] = user.id
             flash('Login realizado com sucesso!', 'success')
@@ -110,9 +96,7 @@ def login():
     return render_template('login.html')
 
 
-
-
-''' sistema de logout '''
+''' Sistema de logout '''
 @app.route('/logout')
 @login_required
 def logout():
@@ -120,17 +104,14 @@ def logout():
     return redirect(url_for('login'))
 
 
-
-
-''' sistema de exibir carros '''
+''' Sistema de exibir carros '''
 @app.route('/cars')
 def listar_carros():
     carros = Car.query.all()
     return render_template('cars.html', carros=carros)
 
 
-
-''' sistema de adicionar carros (apenas para usuários logados) '''
+''' Sistema de adicionar carros (apenas para usuários logados) '''
 @app.route('/add_car', methods=['GET', 'POST'])
 @login_required
 def add_car():
@@ -138,6 +119,7 @@ def add_car():
         marca = request.form['marca']
         modelo = request.form['modelo']
         preco_dia_raw = request.form['preco_dia']
+
         # Validação básica: converter para float
         try:
             preco_dia = float(preco_dia_raw)
@@ -162,26 +144,32 @@ def add_car():
         flash('Carro adicionado com sucesso!', 'success')
         return redirect(url_for('listar_carros'))
 
-    # Se não for POST, apenas renderiza o formulário
     return render_template('add_car.html')
 
 
+''' NOVA ROTA: Sistema de Deletar Carros '''
+@app.route('/delete_car/<int:id>', methods=['POST'])
+@login_required
+def delete_car(id):
+    carro = Car.query.get_or_404(id)
+    
+    # Segurança: Só permite deletar se o carro for do usuário logado
+    if carro.user_id != current_user.id:
+        flash('Você não tem permissão para excluir este carro.', 'error')
+        return redirect(url_for('listar_carros'))
+
+    db.session.delete(carro)
+    db.session.commit()
+    flash('Carro removido com sucesso!', 'success')
+    return redirect(url_for('listar_carros'))
 
 
-''' sistema de dashboard '''
+''' Sistema de dashboard '''
 @app.route('/dashboard')
 @login_required
 def dashboard():
     carros = Car.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', carros=carros)
-
-
-
-
-
-    
-
-
 
 
 if __name__ == '__main__':

@@ -2,47 +2,58 @@
 
 {% block title %}Login — TedCar{% endblock %}
 
-{% block content %}
-  <div class="card" style="max-width:480px;margin:auto">
-    <h2>Login</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, msg in messages %}
-          <div class="flash {{ category }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form method="post" action="{{ url_for('login') }}">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" required>
-
-      <label for="senha">Senha</label>
-      <input id="senha" name="senha" type="password" required>
-
-      <div style="margin-top:12px">
-        <button class="primary" type="submit">Entrar</button>
-        <a href="{{ url_for('register') }}" style="margin-left:8px"><button type="button" class="ghost">Registrar</button></a>
-      </div>
-    </form>
-  </div>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css', v=2) }}">
 {% endblock %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-</head>
-<body>
-  <h2>🔐 Login</h2>
-  <form method="POST">
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
-    <label>Senha:</label><br>
-    <input type="password" name="senha" required><br><br>
-    <button type="submit">Entrar</button>
-  </form>
-  <p>Não tem conta? <a href="/register">Cadastre-se</a></p>
-</body>
-</html>
+
+{% block navbar %}
+  <header class="navbar">
+    <div class="logo">TedCar</div>
+    <nav>
+      <a href="{{ url_for('listar_carros') }}">Carros</a>
+      <a href="{{ url_for('login') }}" class="active">Entrar</a>
+      <a href="{{ url_for('register') }}">Registrar</a>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block body_content %}
+  <div class="main-content">
+    <div class="card">
+      <h2>Acessar Sistema</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" action="{{ url_for('login') }}">
+        
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required placeholder="seu@email.com">
+        </div>
+
+        <div class="input-group">
+          <label for="senha">Senha</label>
+          <input id="senha" name="senha" type="password" required placeholder="••••••••">
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Entrar</button>
+          <a href="{{ url_for('register') }}" class="btn ghost">Criar Conta</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <footer class="neon-footer">
+    © 2025 TedCar
+  </footer>
+{% endblock %}

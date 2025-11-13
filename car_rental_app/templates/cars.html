@@ -2,27 +2,75 @@
 
 {% block title %}Carros — TedCar{% endblock %}
 
-{% block content %}
-  <div class="card">
-    <h2>🚘 Carros Cadastrados</h2>
-    {% if carros %}
-      <div class="grid">
-        {% for c in carros %}
-          <div class="car-item">
-            <div class="car-meta">
-              <div class="car-title">{{ c.marca }} {{ c.modelo }}</div>
-              <div class="muted">Status: {{ c.status }}</div>
-            </div>
-            <div class="car-price">R${{ "%.2f"|format(c.preco_dia) }}/dia</div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="muted">Nenhum carro cadastrado.</p>
-    {% endif %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='cars.css', v=5) }}">
+{% endblock %}
 
-    <div style="margin-top:14px">
-      <a href="{{ url_for('add_car') }}"><button class="primary">Cadastrar novo carro</button></a>
+{% block navbar %}
+  <header class="navbar">
+    <div class="logo">TedCar</div>
+    <nav>
+      <a href="{{ url_for('listar_carros') }}" class="active">Carros</a>
+      <a href="{{ url_for('add_car') }}">Cadastrar</a>
+      <a href="{{ url_for('dashboard') }}">Meu painel</a> 
+      <a href="{{ url_for('logout') }}" class="logout-link">Sair</a>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block body_content %}
+  <div class="main-content">
+    <div class="card">
+      <h2>Carros Disponíveis</h2>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div style="margin-bottom: 20px;">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}" style="padding: 10px; border-radius: 8px; text-align: center; background: rgba(0, 255, 136, 0.15); border: 1px solid #00ff88; color: #00ff88;">
+              {{ msg }}
+            </div>
+          {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% if carros %}
+        <div class="grid">
+          {% for c in carros %}
+            <div class="car-item">
+              <div class="car-info">
+                <div class="car-title">{{ c.marca }} {{ c.modelo }}</div>
+                <div class="muted">Status: {{ c.status or 'Disponível' }}</div>
+              </div>
+
+              <div class="car-footer">
+                <div class="car-price">R${{ "%.2f"|format(c.preco_dia) }}/dia</div>
+                
+                {% if current_user.id == c.user_id %}
+                  <form action="{{ url_for('delete_car', id=c.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este carro?');">
+                    <button type="submit" class="btn-delete" title="Excluir Carro">
+                      🗑️
+                    </button>
+                  </form>
+                {% endif %}
+                
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Nenhum carro cadastrado.</p>
+      {% endif %}
+
+      <div class="actions">
+        <a href="{{ url_for('add_car') }}" class="btn primary">Cadastrar novo carro</a>
+      </div>
     </div>
   </div>
+
+  <footer class="neon-footer">
+    © 2025 TedCar
+  </footer>
 {% endblock %}

@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+  --bg: radial-gradient(circle at center, #020b16 0%, #01060f 100%);
+  --grid-line: rgba(0, 255, 255, 0.08);
+  --accent: #00eaff;
+  --text: #d9eaff;
+  --muted: #7f8fa8;
+  --success-bg: rgba(0, 255, 145, 0.15);
+  --success-border: #00ff88;
+  --radius: 16px;
+  --shadow-glow: 0 0 25px rgba(0, 234, 255, 0.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Evita barra de rolagem */
+}
+
+/* Grade 3D no fundo */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(400px) rotateX(60deg);
+  top: 40%;
+  bottom: 0;
+  opacity: 0.4;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* --- NAVBAR (No Topo) --- */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  background: transparent; /* Fundo transparente para ver a grade */
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--accent);
+  text-shadow: 0 0 15px var(--accent);
+}
+
+.navbar nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 30px;
+  font-size: 1rem;
+  transition: 0.3s;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Efeito Hover e Ativo (Brilho) */
+.navbar nav a:hover, 
+.navbar nav a.active {
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent);
+}
+
+/* --- CONTEÚDO CENTRAL --- */
+.main-container {
+  flex-grow: 1; /* Ocupa o espaço entre o menu e o rodapé */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.card {
+  background: rgba(2, 11, 22, 0.75);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-glow), inset 0 0 30px rgba(0, 234, 255, 0.05);
+  border-radius: var(--radius);
+  padding: 40px 50px;
+  width: 480px;
+  max-width: 90%;
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.7s ease-out;
+}
+
+.card h2 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--accent);
+  font-size: 1.4rem;
+  margin-bottom: 25px;
+  text-shadow: 0 0 5px rgba(0, 234, 255, 0.5);
+}
+
+/* Inputs e Labels */
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+}
+
+/* Botões */
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.3s;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.btn.primary {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 10px rgba(0, 234, 255, 0.1);
+}
+
+.btn.primary:hover {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 25px var(--accent);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid #334155;
+  color: var(--muted);
+}
+
+.btn.ghost:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* Rodapé */
+.neon-footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+/* Mensagens Flash */
+.flash {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.flash.success {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-border);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}

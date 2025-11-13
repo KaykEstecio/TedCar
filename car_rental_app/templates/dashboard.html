@@ -1,22 +1,52 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-</head>
-<body>
-  <h2>Olá, {{ current_user.nome }} 👋</h2>
-  <p>Seus carros cadastrados:</p>
-  {% if carros %}
-    <ul>
-      {% for c in carros %}
-        <li>{{ c.marca }} {{ c.modelo }} — R${{ "%.2f"|format(c.preco_dia) }}/dia — {{ c.status }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Você ainda não cadastrou carros.</p>
-  {% endif %}
-  <a href="/add_car">Adicionar carro</a> |
-  <a href="/logout">Sair</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — TedCar{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css', v=2) }}">
+{% endblock %}
+
+{% block navbar %}
+  <header class="navbar">
+    <div class="logo">TedCar</div>
+    <nav>
+      <a href="{{ url_for('listar_carros') }}">Carros</a>
+      <a href="{{ url_for('add_car') }}">Cadastrar</a>
+      <a href="{{ url_for('dashboard') }}" class="active">Meu painel</a> 
+      <a href="{{ url_for('logout') }}" class="logout-link">Sair</a>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block body_content %}
+  <div class="main-content">
+    <div class="card">
+      <h2>Olá, {{ current_user.nome }} 👋</h2>
+      <p>Seus carros cadastrados:</p>
+
+      {% if carros %}
+        <ul>
+          {% for c in carros %}
+            <li>
+              <span>{{ c.marca }} {{ c.modelo }} — R${{ "%.2f"|format(c.preco_dia) }}/dia — {{ c.status or 'disponível' }}</span>
+              <span class="status"></span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Você ainda não cadastrou carros.</p>
+      {% endif %}
+
+      <div class="actions">
+        <a href="{{ url_for('add_car') }}" class="btn primary">Adicionar carro</a>
+        <a href="{{ url_for('logout') }}" class="btn ghost">Sair</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="neon-footer">
+    © 2025 TedCar
+  </footer>
+{% endblock %}

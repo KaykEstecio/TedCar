@@ -2,33 +2,56 @@
 
 {% block title %}Cadastrar Carro — TedCar{% endblock %}
 
-{% block content %}
-  <div class="card" style="max-width:640px">
-    <h2>🚗 Cadastrar Novo Carro</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, msg in messages %}
-          <div class="flash {{ category }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form method="post" action="{{ url_for('add_car') }}">
-      <label for="marca">Marca</label>
-      <input id="marca" name="marca" type="text" required>
-
-      <label for="modelo">Modelo</label>
-      <input id="modelo" name="modelo" type="text" required>
-
-      <label for="preco_dia">Preço por dia (R$)</label>
-      <input id="preco_dia" name="preco_dia" type="text" required placeholder="Ex: 120.00">
-
-      <div style="margin-top:12px">
-        <button class="primary" type="submit">Cadastrar</button>
-        <a href="{{ url_for('listar_carros') }}" style="margin-left:8px"><button type="button" class="ghost">Voltar</button></a>
-      </div>
-    </form>
-  </div>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='add_car.css', v=5) }}">
 {% endblock %}
 
+{% block navbar %}
+  <header class="navbar">
+    <div class="logo">TedCar</div>
+    <nav>
+      <a href="{{ url_for('listar_carros') }}">Carros</a>
+      <a href="{{ url_for('add_car') }}" class="active">Cadastrar</a>
+      <a href="{{ url_for('dashboard') }}">Meu painel</a> 
+      <a href="{{ url_for('logout') }}" class="logout-link">Sair</a>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+  <div class="main-container">
+    <div class="card">
+      <h2>🚗 Cadastrar Novo Carro</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" action="{{ url_for('add_car') }}">
+        <label for="marca">Marca</label>
+        <input id="marca" name="marca" type="text" required>
+
+        <label for="modelo">Modelo</label>
+        <input id="modelo" name="modelo" type="text" required>
+
+        <label for="preco_dia">Preço por dia (R$)</label>
+        <input id="preco_dia" name="preco_dia" type="text" required>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Cadastrar</button>
+          <a href="{{ url_for('listar_carros') }}" class="btn ghost">Voltar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <footer class="neon-footer">
+    © 2025 TedCar
+  </footer>
+{% endblock %}
