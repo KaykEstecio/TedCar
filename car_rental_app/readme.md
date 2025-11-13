@@ -1,63 +1,127 @@
-# 🚗 CarRent — Aplicativo de Aluguel de Carros (Flask)
 
-**CarRent** é um aplicativo web desenvolvido com **Python e Flask**, criado como projeto acadêmico para simular um sistema de aluguel de carros.  
-Ele permite o cadastro de usuários, login seguro e o gerenciamento de veículos disponíveis para locação.  
 
----
+# TedCar
 
-## 🧩 Funcionalidades principais
+O **TedCar** é uma aplicação web desenvolvida em Python utilizando o framework Flask. Este projeto foi concebido com fins acadêmicos para simular um sistema completo de gestão e aluguel de veículos, focando em boas práticas de desenvolvimento backend, segurança de dados e interface moderna.
 
-- **Cadastro de usuários:** criação de contas com senha criptografada.  
-- **Login e autenticação:** sistema de login seguro com gerenciamento de sessão.  
-- **Dashboard pessoal:** cada usuário visualiza apenas os carros cadastrados por ele.  
-- **Cadastro de veículos:** adição de carros com marca, modelo e preço por dia.  
-- **Listagem pública:** página que exibe todos os carros cadastrados.  
-- **Logout:** encerramento seguro da sessão do usuário.  
+O sistema permite o cadastro de usuários, autenticação segura, gerenciamento de sessão e controle total (CRUD) sobre a frota de veículos, apresentando uma interface visual estilizada com identidade Cyberpunk/Neon.
 
----
+## Funcionalidades
 
-## 🛠️ Tecnologias utilizadas
+O sistema conta com as seguintes funcionalidades principais:
 
-- **Python 3**
-- **Flask** (framework principal)
-- **Flask-Login** (autenticação e controle de acesso)
-- **Flask-SQLAlchemy** (ORM e integração com SQLite)
-- **Werkzeug Security** (hash de senhas)
-- **HTML + CSS (Jinja Templates)**
+  * **Autenticação de Usuários:** Sistema robusto de registro e login com criptografia de senhas (hash).
+  * **Gestão de Sessão:** Controle de acesso seguro utilizando Flask-Login, restringindo rotas protegidas apenas a usuários autenticados.
+  * **Dashboard Personalizado:** Painel exclusivo onde o usuário visualiza e gerencia apenas os veículos cadastrados por ele.
+  * **Gestão de Veículos:**
+      * Cadastro de novos veículos (Marca, Modelo, Preço/Dia).
+      * Listagem pública de frota disponível.
+      * Exclusão de veículos (com verificação de propriedade).
+  * **Interface Visual:** Design responsivo e estilizado com tema escuro (Neon/Cyberpunk) e CSS modular.
+  * **Feedback ao Usuário:** Sistema de mensagens instantâneas (Flash Messages) para confirmações de ações e alertas de erro.
 
----
+## Tecnologias Utilizadas
 
-## 🗄️ Estrutura básica do projeto
+### Backend
 
+  * **Python 3:** Linguagem principal.
+  * **Flask:** Framework web para estruturação da aplicação.
+  * **Flask-Login:** Gerenciamento de sessões de usuário.
+  * **Flask-SQLAlchemy:** ORM para integração e manipulação do banco de dados.
+  * **Werkzeug Security:** Biblioteca para hash e verificação segura de senhas.
+
+### Frontend
+
+  * **HTML5 / Jinja2:** Motor de templates para renderização dinâmica.
+  * **CSS3:** Estilização personalizada com arquitetura modular (arquivos dedicados por página) e uso de variáveis CSS.
+
+### Banco de Dados
+
+  * **SQLite:** Banco de dados relacional utilizado no ambiente de desenvolvimento (facilmente escalável para PostgreSQL).
+
+## Estrutura do Projeto
+
+A organização de diretórios segue o padrão MVC (Model-View-Controller) adaptado para Flask:
+
+```text
+/car_rental_app
+│
+├── app.py                # Ponto de entrada da aplicação e definição de rotas
+├── db.py                 # Configuração e instância do banco de dados
+├── modelos.py            # Modelos de dados (User e Car)
+│
+├── static/               # Arquivos estáticos (Estilos CSS)
+│   ├── style.css         # Estilos globais
+│   ├── login.css         # Estilo específico da tela de login
+│   ├── register.css      # Estilo específico da tela de registro
+│   ├── dashboard.css     # Estilo do painel do usuário
+│   └── cars.css          # Estilo da listagem e cards de carros
+│
+├── templates/            # Templates HTML (Views)
+│   ├── base.html         # Layout base (Navbar, Footer e Blocos)
+│   ├── login.html        # Página de login
+│   ├── register.html     # Página de registro
+│   ├── dashboard.html    # Painel administrativo do usuário
+│   └── cars.html         # Listagem geral de veículos
+│
+└── instance/
+    └── database.db       # Arquivo do banco de dados SQLite
 ```
-/app.py              # Arquivo principal Flask
-/db.py               # Inicialização do banco de dados
-/modelos.py          # Definição das classes User e Car
-/templates/          # Páginas HTML (index, login, register, dashboard, etc.)
-/static/             # Arquivos estáticos (CSS, imagens)
-```
 
+## Como Executar o Projeto
 
----
+Para rodar o projeto localmente, siga as instruções abaixo:
 
-## 🎯 Objetivo do projeto
+1.  **Clone o repositório:**
 
-O objetivo é **demonstrar conceitos de desenvolvimento web com Flask**, incluindo:
+    ```bash
+    git clone https://github.com/SeuUsuario/TedCar.git
+    cd TedCar
+    ```
 
-- Estrutura de rotas e templates;  
-- Criação e manipulação de banco de dados SQLite;  
-- Login seguro e autenticação;  
-- Boas práticas em pequenos projetos backend.  
+2.  **Crie um ambiente virtual (opcional, mas recomendado):**
 
----
+    ```bash
+    python -m venv venv
+    # Windows
+    venv\Scripts\activate
+    # Linux/Mac
+    source venv/bin/activate
+    ```
 
-## 🚀 Próximos passos (melhorias sugeridas)
+3.  **Instale as dependências:**
 
-- Adicionar sistema de busca e filtros para carros;  
-- Implementar upload de imagens para os veículos;  
-- Criar uma API REST para integração com frontend;  
-- Design responsivo com Bootstrap ou Tailwind.  
+    ```bash
+    pip install flask flask-login flask-sqlalchemy
+    ```
 
----
+4.  **Execute a aplicação:**
 
-💡 Desenvolvido com dedicação como projeto acadêmico.
+    ```bash
+    python app.py
+    ```
+
+5.  **Acesse no navegador:**
+    O sistema estará disponível em `http://127.0.0.1:5000`.
+
+## Objetivos de Aprendizado
+
+Este projeto visa demonstrar proficiência nos seguintes conceitos:
+
+  * Implementação de arquitetura Client-Server com Flask.
+  * Manipulação de banco de dados relacional via ORM.
+  * Segurança em aplicações web (CSRF, Session Hijacking, Password Hashing).
+  * Desenvolvimento de interfaces modulares e reutilizáveis com Jinja2.
+
+## Melhorias Futuras
+
+O roteiro de desenvolvimento prevê as seguintes atualizações:
+
+  * Implementação de upload de imagens para os veículos.
+  * Sistema de busca e filtragem avançada (por preço ou modelo).
+  * Criação de uma API RESTful para consumo externo.
+  * Deploy automatizado em serviços de nuvem (Render/Railway).
+
+-----
+
+Desenvolvido para fins acadêmicos.
