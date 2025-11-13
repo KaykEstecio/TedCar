@@ -75,7 +75,7 @@ Para rodar o projeto localmente, siga as instruções abaixo:
 1.  **Clone o repositório:**
 
     ```bash
-    git clone https://github.com/SeuUsuario/TedCar.git
+    git clone https://github.com/KaykEstecio/TedCar.git
     cd TedCar
     ```
 
